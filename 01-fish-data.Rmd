@@ -1,5 +1,7 @@
 # Example with fish data from SERS
 
+### The data
+
 In this example we are interested in exploring data from a specific data resource -- the Swedish Electrofishing Registry - SERS (Department of Aquatic Resources, SLU Aqua). This database has 2.8 M observations starting in the 1950's.
 
 SBDI is a collection of many biodiversity databases. We start by searching for the data resource we are interested in by using the function `pick_filter()`. This is an interactive query guiding you through the many resources available to filtering your query (data resources, spatial layers, and curated species lists).
@@ -50,12 +52,12 @@ save(xf, file = "data/tmp_occdata_for compile.rdata")
 load(file = "data/tmp_occdata_for compile.rdata")
 ```
 
-## Plotting data on a map
+### Plotting data on a map
 
 You can quickly plot all the observations as a PDF file with the function `ocurrence_plot()`, one page per species:
 
 ```{r pdf_plot, eval=FALSE}
-occurrences_plot(xf, "obsPlot.pdf", 
+occurrences_plot(xf, "output/obsPlot.pdf", 
                  grouped=FALSE, 
                  taxon_level="species", 
                  pch='.')
@@ -82,7 +84,7 @@ leaflet(width = "100%") %>%
                   clusterOptions = markerClusterOptions())
 ```
 
-## Temporal summary
+### Temporal summary
 
 A quick summary over the years reveals a drop in number of records over time.
 
@@ -97,7 +99,7 @@ hist(xf$data$year,
      main = "")
 ```
 
-## Species summary
+### Species summary
 
 In the same way we can summarise the number of observations for each species, by common or scientific name.
 
@@ -118,11 +120,11 @@ head(sppDF)
 Perhaps, you want to send this table as a .CSV file to a colleague. Save the table:
 
 ```{r savesummary, eval=FALSE}
-write.csv(sppDF, "SERS_species_summary.csv")
+write.csv(sppDF, "output/SERS_species_summary.csv")
 # NOTE: again this will be saved on your working directory
 ```
 
-## Spatial biodiversity analysis
+### Spatial biodiversity analysis
 
 Let's now ask: How does the species richness vary across Sweden?
 

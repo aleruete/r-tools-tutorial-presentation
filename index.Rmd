@@ -3,13 +3,20 @@ title: "Using R tools for analysis <br>of primary biodiversity data provided by 
 author: "Debora Arlt and Alejandro Ruete <br>for the Swedish Biodiversity Data Infrastructure" 
 date: "`r Sys.Date()`"
 description: "R tools for biodiversity data" 
-site: bookdown::bookdown_site
-
-bibliography: references.bib
+output: 
+  ioslides_presentation: 
+    incremental: yes
+    widescreen: yes
+    smaller: yes
+    css: www/style.css
+    logo: images/sbdi-logo-orginal-large.png
+    fig_caption: yes
+    slide_level: 3
+delete_merged_file: true
+bibliography: www/references.bib
 biblio-style: apalike
 link-citations: yes
 colorlinks: yes
-
 fontsize: 10pt
 github-repo: biodiversitydata-se/r-tools-tutorial
 cover: images/sbdi-logo-orginal-large.png
@@ -19,11 +26,17 @@ url: https\://biodiversitydata-se.github.io/r-tools-tutorial/
 
 # Introduction {.unnumbered}
 
-<img src="images/sbdi-logo-orginal-large.png" class="cover" width="250" style="float: right;"/> Biodiversity resources are increasingly international. The SBDI has made an effort to canalise biodiversity data and resources to help the research community access and analyse Swedish primary biodiversity data. Each research question draws its own challenges which are unique in themselves. Our aim here is to provide a few examples that prompt questions that may be asked at different stages of the process. The validity and appropriateness of a particular method depends on the individual researcher(s). For a comprehensive workflow on how to treat and analyse primary biodiversity data please refer to our tutorial on [biodiversity analysis tools](https://github.com/biodiversitydata-se/biodiversity-analysis-tools) where we go through the complete workflow Data --\> Cleaning --\> Fitness evaluation --\> Analysis
+### Workflow
+
+Biodiversity resources are increasingly international. The SBDI has made an effort to canalise biodiversity data and resources to help the research community access and analyse Swedish primary biodiversity data. Each research question draws its own challenges which are unique in themselves. Our aim here is to provide a few examples that prompt questions that may be asked at different stages of the process. The validity and appropriateness of a particular method depends on the individual researcher(s). For a comprehensive workflow on how to treat and analyse primary biodiversity data please refer to our tutorial on [biodiversity analysis tools](https://github.com/biodiversitydata-se/biodiversity-analysis-tools) where we go through the complete workflow
+
+Data ➡️ Cleaning ➡️ Fitness evaluation ➡️ Analysis
+
+### ---
 
 `r htmltools::includeHTML("images/Workflow Overview Horizontal.html")`
 
-## R and Mirroreum {.unnumbered}
+### R and Mirroreum {.unnumbered}
 
 The present tutorial is focused on the statistical programming language R. R is a free software environment for statistical computing and graphics that is widely used within the scientific community and where the complete analysis workflow can be documented in a fully reproducible way.
 
@@ -31,9 +44,11 @@ At SBDI we provide access for researchers and students to [Mirroreum](https://mi
 
 Compared to running R Studio on your own machine, Mirroreum offers more computational resources and a standardized environment where you can rely on all the relevant packages being installed and the configuration parameters being set appropriately. To know more about Mirroreum or to request an account please visit the [SBDI documentation site](https://docs.biodiversitydata.se/analyse-data/mirroreum/)
 
-[![Mirroreum - An RStudio session on a server](images/Mirroreum.png "Mirroreum - An RStudio session on a server")](https://mirroreum.biodiversitydata.se/auth-sign-in)
+[![Mirroreum - An RStudio session on a server](images/Mirroreum.png "Mirroreum - An RStudio session on a server"){width="800"}](https://mirroreum.biodiversitydata.se/auth-sign-in)
 
 ## SBDI4R - an R 📦 to search an access data {.unnumbered}
+
+### 📦
 
 The SBDI4R package enables the R community to directly access data and resources hosted by SBDI. The goal is to enable observations of species to be queried and output in a range of standard formats. It includes some filter functions that allow you to filter prior to download. It also includes some simple summary functions, and some function for some simple data exploration. The examples included in this tutorial also show you how you can continue exploring and analyzing using other R package.
 
@@ -51,7 +66,7 @@ library(BIRDS)
 
 Various aspects of the SBDI4R package can be customized.
 
-#### Caching {.unnumbered}
+### Caching {.unnumbered}
 
 SBDI4R can cache most results to local files. This means that if the same code is run multiple times, the second and subsequent iterations will be faster. This will also reduce load on the web servers. By default, this caching is session-based, meaning that the local files are stored in a temporary directory that is automatically deleted when the R session is ended. This behavior can be altered so that caching is permanent, by setting the caching directory to a non-temporary location. For example, under Windows, use something like:
 
@@ -84,7 +99,7 @@ sbdi_config(caching="off")
 
 or set to "refresh", meaning that the cached results will re-downloaded from the SBDI servers and the cache updated. (This will happen for as long as caching is set to "refresh" --- so you may wish to switch back to normal "on" caching behavior once you have updated your cache with the data you are working on).
 
-#### E-mail address {.unnumbered}
+### E-mail address {.unnumbered}
 
 Each download request to SBDI servers is also accompanied by an "e-mail address" string that identifies the user making the request. You will need to provide an email address registered with the SBDI. You can create an account [here](https://auth.biodiversitydata.se/cas/login). Once an email is registered with the SBDI, it should be stored in the config:
 
@@ -94,7 +109,7 @@ sbdi_config(email="your.valid@emailaddress.com")
 
 Else you can provide this e-mail address as a parameter directly to each call of the function occurrences().
 
-#### Setting the download reason {.unnumbered}
+### Setting the download reason {.unnumbered}
 
 SBDI requires that you provide a reason when downloading occurrence data (via the SBDI4R `occurrences()` function). You can provide this as a parameter directly to each call of `occurrences()`, or you can set it once per session using:
 
@@ -104,7 +119,7 @@ sbdi_config(download_reason_id = "your_reason_id")
 
 (See `sbdi_reasons()` for valid download reasons, e.g. \* 3 for "education", \* 7 for "ecological research", \* 8 for "systematic research/taxonomy", \* 10 for "testing")
 
-#### Privacy {.unnumbered}
+### Privacy {.unnumbered}
 
 ***NO*** other personal identification information is sent. You can see all configuration settings, including the the user-agent string that is being used, with the command:
 
@@ -112,7 +127,7 @@ sbdi_config(download_reason_id = "your_reason_id")
 sbdi_config()
 ```
 
-#### Other options {.unnumbered}
+### Other options {.unnumbered}
 
 If you make a request that returns an empty result set (e.g. an un-matched name), by default you will simply get an empty data structure returned to you without any special notification. If you would like to be warned about empty result sets, you can use:
 
@@ -120,23 +135,34 @@ If you make a request that returns an empty result set (e.g. an un-matched name)
 sbdi_config(warn_on_empty=TRUE)
 ```
 
-## Other packages needed {.unnumbered}
+### Other packages needed {.unnumbered}
 
 Some additional packages are needed for these examples. Install them if necessary with the following script:
 
-```{r, message=FALSE}
-to_install <- c("BIRDS","colorRamps", "cowplot","dplyr","ggplot2", 
-                "leaflet", "maps", "mapdata", "maptools", "sf", "sp",
-                "rgeos", "tidyr", "xts")
+```{r, message=FALSE, eval=FALSE}
+to_install <- c("colorRamps", "cowplot","dplyr","ggplot2", 
+                "leaflet", "maps", "mapdata", "maptools", 
+                "remotes","sf", "tidyr", "xts")
 to_install <- to_install[!sapply(to_install, 
                                  requireNamespace, 
                                  quietly=TRUE)]
 if(length(to_install)>0)
     install.packages(to_install, 
                      repos="http://cran.us.r-project.org")
+
+remotes::install_github("Greensway/BIRDS")
 ```
 
-## Your collaboration is appreciated {.unnumbered}
+```{r wakeup, include=FALSE, echo=FALSE, warning=FALSE}
+SBDI4R::occurrences(taxon = "order:Odonata", 
+                    fq = "year:1960",
+                    extra = "collector",
+                    email = "sbdi4r-test@biodiversitydata.se", 
+                    download_reason_id = 10)
+
+```
+
+### Your collaboration is appreciated {.unnumbered}
 
 Open Source also means that you can contribute. You don't need to know how to program but every input is appreciated. Did you find something that is not working? Have suggestions for examples or text? you can always
 
@@ -150,3 +176,11 @@ The repositories you can contribute to are:
 -   SBDI4R <https://github.com/biodiversitydata-se/SBDI4R> (NOTE: we may not develop this package but instead move to a new one)\
 -   the general analysis workflows <https://github.com/biodiversitydata-se/biodiversity-analysis-tools>\
 -   this R-tools tutorial <https://github.com/biodiversitydata-se/r-tools-tutorial>
+
+```{r chp 1, child="01-fish-data.Rmd", include=FALSE}
+
+```
+
+```{r chp 2, child="02-dragonflies-data.Rmd", include=FALSE}
+
+```

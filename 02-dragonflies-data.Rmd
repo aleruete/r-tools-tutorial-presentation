@@ -12,7 +12,7 @@ In this example we are interested in exploring opportunistically
 collected data from the Swedish citizen science species observation
 portal - Artportalen.
 
-## Name searching
+### Name searching
 
 To begin with, we want be sure there is an unequivocal way to find the
 species within the order Odonata (dragonflies) and nothing else, so
@@ -20,6 +20,7 @@ let's search for "odonata":
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, include=FALSE}
 library(SBDI4R)
+library(sf)
 ```
 
 ```{r search1, echo=TRUE, eval=FALSE}
@@ -52,7 +53,7 @@ sx$data[, c("guid", "scientificName", "rank", "occurrenceCount")]
 Now we can download the taxonomic data (note that the search is
 case-sensitive):
 
-```{r, message=FALSE, results=FALSE}
+```{r taxinfo, message=FALSE, results=FALSE}
 tx <- taxinfo_download("order_s:Odonata", 
                        fields = c("guid", "order_s","genus_s", "specificEpithet_s", 
                                   "scientificName",  "canonicalName_s", "rank"), 
@@ -62,7 +63,7 @@ tx <- tx[tx$rank == "species" & tx$genusS != "",] ## restrict to species and not
 
 You can save the `tx` object as the complete species list for later use.
 
-## Filter the search to get the observations
+### Filter the search to get the observations
 
 We start by searching for the data resource we are interested in using
 the function `pick_filter()`. This is an interactive query guiding you
@@ -191,7 +192,7 @@ save(xf, file = "an_appropriate_name.rdata")
 load(file = "an_appropriate_name.rdata")
 ```
 
-## Quality and fit-for-use check
+### Quality and fit-for-use check
 
 Before we can use the observation records we need to know if the
 observation effort (sampling effort) has varied over time and in space.
@@ -208,7 +209,7 @@ BIRDS package documentation for more detail.
 library(BIRDS)
 ```
 
-```{r organisebirds, message=FALSE}
+```{r organisebirds, message=FALSE, eval=FALSE}
 OB <- organiseBirds(xf$data, sppCol = "species" , 
                     # We only want observations identified at the species level
                     taxonRankCol = "rank", taxonRank = "species", 
@@ -222,6 +223,14 @@ wInt <- unlist(st_intersects(gotaland, Sweden_Grid_25km_Wgs84))
 gotaland_grid25 <- Sweden_Grid_25km_Wgs84[wInt,]
 
 SB <- summariseBirds(OB, grid = gotaland_grid25, spillOver = "unique")
+```
+
+```{r save birds, eval=FALSE, include=FALSE}
+save(list=c("OB", "SB"), file = "output/BIRDS_summary.rdata")
+```
+
+```{r load birds, include=FALSE}
+load(file = "output/BIRDS_summary.rdata")
 ```
 
 Once summarised, we can see over space and for a few selected years how
@@ -355,7 +364,7 @@ spp <- ggplot(data = SB$spatial ,aes( fill = nSpp))+
 grid.arrange(vis, spp, ncol=2)
 ```
 
-#### Temporal check
+### Temporal check
 
 We see that `SB` contains an element called `SB$temporal` that contains
 a daily time series with time-specific rows when there is information.
@@ -425,7 +434,7 @@ addLegend("topleft", c("Observations", "Visits"),
           lwd=2)
 ```
 
-## Species trends
+### Species trends
 
 We can now look at some particular species and ask whether those have
 changed in occurrence over time:
@@ -476,51 +485,3 @@ legend("bottomright",
        text.font = 3, col = c("black", "#78D2EB"), lwd = 3, bty = "n")
 par(oldpar)
 ```
-
-<!-- Plot no. gridcells with visits for species x and no. gridcells with visits for all species over years (we simply explore by comparing records for a species with no visits, can assume that species has increased of stronger positive trend than for no. visits) -->
-
-<!-- (species x: Tvåfläckad trollslända Epitheca bimaculata) -->
-
-<!-- ```{r} -->
-
-<!-- sppCountGrid <- lapply(SB$overlaid, function(x, focalSpp="Libellula quadrimaculata"){ -->
-
-<!--   tmp <- x %>%  -->
-
-<!--             group_by(year, visitUID) %>%  -->
-
-<!--             summarise("focalCount" = sum(scientificName == focalSpp), -->
-
-<!--                       "sppLength" = length(unique(scientificName)), -->
-
-<!--                       .groups = "drop") %>%  -->
-
-<!--             ungroup() %>%  -->
-
-<!--             group_by(year) %>%  -->
-
-<!--             summarise("focalCount" = sum(focalCount), -->
-
-<!--                       "nVis" = length(unique(visitUID)),  -->
-
-<!--                       .groups = NULL) -->
-
-<!--   res <- as.data.frame(tmp) -->
-
-<!--   return(res) -->
-
-<!-- } ) -->
-
-<!-- sppCountGrid <- bind_rows(sppCountGrid, .id = "grid_label") -->
-
-<!-- sppCountGrid %>%  -->
-
-<!--             group_by(year, grid_label) %>%  -->
-
-<!--             summarise("ngrid"= length(unique(grid_label)), -->
-
-<!--                       "ngridSpp" = ,  -->
-
-<!--                       .groups = "drop") -->
-
-<!-- ``` -->
