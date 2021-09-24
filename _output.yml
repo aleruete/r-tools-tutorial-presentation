@@ -1,0 +1,6 @@
+bookdown::ioslides_presentation:
+    incremental: true
+    widescreen: true
+    smaller: true
+    css: styles.css
+    logo: sbdi-logo-orginal-large.png
