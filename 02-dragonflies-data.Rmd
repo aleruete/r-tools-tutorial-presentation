@@ -228,13 +228,13 @@ Once summarised, we can see over space and for a few selected years how
 the number of observations is distributed:
 
 ```{r plotBIRDSspatial_cose, eval=FALSE}
-maxC <- max(SB$spatial@data$nObs, na.rm = TRUE)
+maxC <- max(SB$spatial$nObs, na.rm = TRUE)
 palBW <- leaflet::colorNumeric(c("white", "navyblue"), 
                                c(0, maxC), 
                                na.color = "transparent")
 oldpar <- par()
 par(mar = c(1,1,1,1), mfrow=c(1,3))
-plot(SB$spatial, col=palBW(SB$spatial@data$nObs),
+plot(SB$spatial$geometry, col=palBW(SB$spatial$nObs),
      border = "grey", main="All years") ## with palette
 legend("bottomleft", inset = c(0,0.05),
        legend = round(seq(0, maxC, length.out = 5)),
@@ -248,12 +248,12 @@ yearlySp <- exportBirds(SB,
                         variable = "nObs", 
                         method = "sum")
 
-maxC <- max(yearlySp@data$'2005', na.rm = TRUE)
+maxC <- max(yearlySp$'2005', na.rm = TRUE)
 palBW <- leaflet::colorNumeric(c("white", "navyblue"), 
                                c(0, maxC), 
                                na.color = "transparent")
 
-plot(yearlySp["2005"], col=palBW(yearlySp@data$'2005'), 
+plot(yearlySp$geometry, col=palBW(yearlySp$'2005'), 
      border = "grey",main="2005")
 legend("bottomleft", inset = c(0,0.05),
        legend = round(seq(0, maxC, length.out = 5)),
@@ -261,12 +261,12 @@ legend("bottomleft", inset = c(0,0.05),
        border = "grey",
        title = "Number of \nobservations", pch = 15, bty="n")
 
-maxC <- max(yearlySp@data$'2010', na.rm = TRUE)
+maxC <- max(yearlySp'2010', na.rm = TRUE)
 palBW <- leaflet::colorNumeric(c("white", "navyblue"), 
                                c(0, maxC), 
                                na.color = "transparent")
 
-plot(yearlySp["2010"], col=palBW(yearlySp@data$'2010'), 
+plot(yearlySp$geometry, col=palBW(yearlySp$'2010'), 
      border = "grey",main="2010")
 legend("bottomleft", inset = c(0,0.05),
        legend = round(seq(0, maxC, length.out = 5)),
@@ -277,13 +277,13 @@ par(oldpar)
 ```
 
 ```{r plotBIRDSspatial, echo=FALSE, fig.width=8}
-maxC <- max(SB$spatial@data$nObs, na.rm = TRUE)
+maxC <- max(SB$spatial$nObs, na.rm = TRUE)
 palBW <- leaflet::colorNumeric(c("white", "navyblue"), 
                                c(0, maxC), 
                                na.color = "transparent")
 oldpar <- par()
 par(mar = c(1,1,1,1), mfrow=c(1,3))
-plot(SB$spatial, col=palBW(SB$spatial@data$nObs),
+plot(SB$spatial$geometry, col=palBW(SB$spatial$nObs),
      border = "grey", main="All years") ## with palette
 legend("bottomleft", inset = c(0,0.05),
        legend = round(seq(0, maxC, length.out = 5)),
@@ -297,12 +297,12 @@ yearlySp <- exportBirds(SB,
                         variable = "nObs", 
                         method = "sum")
 
-maxC <- max(yearlySp@data$'2005', na.rm = TRUE)
+maxC <- max(yearlySp$'2005', na.rm = TRUE)
 palBW <- leaflet::colorNumeric(c("white", "navyblue"), 
                                c(0, maxC), 
                                na.color = "transparent")
 
-plot(yearlySp["2005"], col=palBW(yearlySp@data$'2005'), 
+plot(yearlySp$geometry, col=palBW(yearlySp$'2005'), 
      border = "grey",main="2005")
 legend("bottomleft", inset = c(0,0.05),
        legend = round(seq(0, maxC, length.out = 5)),
@@ -310,12 +310,12 @@ legend("bottomleft", inset = c(0,0.05),
        border = "grey",
        title = "Number of \nobservations", pch = 15, bty="n")
 
-maxC <- max(yearlySp@data$'2010', na.rm = TRUE)
+maxC <- max(yearlySp$'2010', na.rm = TRUE)
 palBW <- leaflet::colorNumeric(c("white", "navyblue"), 
                                c(0, maxC), 
                                na.color = "transparent")
 
-plot(yearlySp["2010"], col=palBW(yearlySp@data$'2010'), 
+plot(yearlySp$geometry, col=palBW(yearlySp$'2010'), 
      border = "grey",main="2010")
 legend("bottomleft", inset = c(0,0.05),
        legend = round(seq(0, maxC, length.out = 5)),
@@ -326,19 +326,15 @@ suppressWarnings(par(oldpar))
 ```
 
 We now want to use the number of field visits as the measure for
-sampling effort. And since there are other ways to plot spatial data, we
-this time use the package `sf` instead of `sp`:
+sampling effort. :
 
 ```{r ggplot1, message=FALSE, warning=FALSE, fig.width=8}
-library(sf)
 library(cowplot)
 library(ggplot2)
 library(colorRamps)
 library(gridExtra)
 
-spatial_sf <- st_as_sf(SB$spatial)
-
-vis <- ggplot(data = spatial_sf, aes( fill = nVis)) +
+vis <- ggplot(data = SB$spatial, aes( fill = nVis)) +
   geom_sf() +
   ggtitle("Visits") +
   scale_fill_gradient(low = "#56B1F7",
@@ -347,7 +343,7 @@ vis <- ggplot(data = spatial_sf, aes( fill = nVis)) +
   theme(plot.margin = margin(1, 1, 1, 1, "pt")) +
   theme_cowplot()
 
-spp <- ggplot(data = spatial_sf ,aes( fill = nSpp))+
+spp <- ggplot(data = SB$spatial ,aes( fill = nSpp))+
   geom_sf()+
   ggtitle("Number of species")+
   scale_fill_gradient(low = "#56B1F7",
