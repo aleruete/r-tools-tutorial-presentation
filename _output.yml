@@ -1,4 +1,4 @@
-bookdown::ioslides_presentation:
+ioslides_presentation:
     incremental: true
     widescreen: true
     smaller: true

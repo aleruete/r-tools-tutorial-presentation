@@ -1,0 +1,25 @@
+Package: rtoolstutorial
+Type: Book
+Title: Examples for biodiversity data analysis using SBDI4R.
+Version: 0.0.1
+Imports: 
+    bookdown,
+    ggplot2, 
+    jpeg, 
+    leaflet,
+    maps, 
+    mapdata,
+    maptools,
+    rgeos, 
+    rmarkdown
+    sp,
+    sf, 
+    tidyr,
+    tidyverse,
+    vegan
+Suggests:
+Remotes: 
+    Greensway/BIRDS,
+    biodiversitydata-se/SBDI4R,
+    rstudio/rmarkdown
+Encoding: UTF-8
