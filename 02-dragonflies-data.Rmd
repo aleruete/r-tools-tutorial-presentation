@@ -1,22 +1,10 @@
----
-output: html_document
-editor_options: 
-  chunk_output_type: inline
-  markdown: 
-    wrap: 72
----
-
-# Example with opportunistic data on Dragonflies
-
-In this example we are interested in exploring opportunistically
-collected data from the Swedish citizen science species observation
-portal - Artportalen.
+# Opportunistic data on 🐲-flies
 
 ### Name searching
 
-To begin with, we want be sure there is an unequivocal way to find the
-species within the order Odonata (dragonflies) and nothing else, so
-let's search for "odonata":
+In this example we are interested in exploring opportunistically collected data from the Swedish citizen science species observation portal - Artportalen.
+
+To begin with, we want be sure there is an unequivocal way to find the species within the order Odonata (dragonflies) and nothing else, so let's search for "odonata":
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, include=FALSE}
 library(SBDI4R)
@@ -33,12 +21,7 @@ sx <- search_fulltext("odonata")
 sx$data[, c("guid", "scientificName", "rank", "occurrenceCount")]
 ```
 
-We quickly see there that other taxonomic levels appear too, and also
-species that look suspiciously as not belonging to dragonflies. But
-there is only one order. Let's refine the search. To know which search
-fields we can use to filter the search we use the function
-`sbdi_fields(fields_type = "general")`. The search field we are looking
-for is "order_s".
+We quickly see there that other taxonomic levels appear too, and also species that look suspiciously as not belonging to dragonflies. But there is only one order. Let's refine the search. To know which search fields we can use to filter the search we use the function `sbdi_fields(fields_type = "general")`. The search field we are looking for is "order_s".
 
 ```{r search2,  echo=TRUE, eval=FALSE}
 sx <- search_fulltext(fq="order_s:Odonata", page_size = 10)
@@ -50,8 +33,7 @@ sx <- search_fulltext(fq="order_s:Odonata", page_size = 10)
 sx$data[, c("guid", "scientificName", "rank", "occurrenceCount")]
 ```
 
-Now we can download the taxonomic data (note that the search is
-case-sensitive):
+Now we can download the taxonomic data (note that the search is case-sensitive):
 
 ```{r taxinfo, message=FALSE, results=FALSE}
 tx <- taxinfo_download("order_s:Odonata", 
@@ -65,19 +47,14 @@ You can save the `tx` object as the complete species list for later use.
 
 ### Filter the search to get the observations
 
-We start by searching for the data resource we are interested in using
-the function `pick_filter()`. This is an interactive query guiding you
-through the many resources available to filtering your query (data
-resources, spatial layers, and curated species lists).
+We start by searching for the data resource we are interested in using the function `pick_filter()`. This is an interactive query guiding you through the many resources available to filtering your query (data resources, spatial layers, and curated species lists).
 
 ```{r filter2.1, message=FALSE, eval=FALSE}
 # follow the instructions 
 fq_str <- pick_filter("resource") 
 ```
 
-Follow the instructions. Your choices here would have been "in3" --\>
-"dr5". Your variable `fq_str` will now contain a string
-"data_resource_uid:dr5".
+Follow the instructions. Your choices here would have been "in3" --\> "dr5". Your variable `fq_str` will now contain a string "data_resource_uid:dr5".
 
 ```{r filter2.2, echo=FALSE, eval=TRUE}
 # we cant do it interactive here so we force it
@@ -93,16 +70,9 @@ fq_str <- c(fq_str, paste0("year:[", y1, " TO ", y2,"]"))
 # Note the square brackets are hard limits
 ```
 
-We also want to filter spatially for Southern Sweden
-([Götaland](https://en.wikipedia.org/wiki/G%C3%B6taland)).
+We also want to filter spatially for Southern Sweden ([Götaland](https://en.wikipedia.org/wiki/G%C3%B6taland)).
 
-Vector spatial layers (eg. polygons) can be imported in a number of
-different ways. SBDI APIs take as search input polygons in the so-called
-WKT [Well Known
-Text](https://www.geoapi.org/3.0/javadoc/org/opengis/referencing/doc-files/WKT.html)
-format. So the first step is to load a vector layer and transform it
-into a WKT string. You could instead use the data we provid in the
-SBDI4R package `data("swe")`.
+Vector spatial layers (eg. polygons) can be imported in a number of different ways. SBDI APIs take as search input polygons in the so-called WKT [Well Known Text](https://www.geoapi.org/3.0/javadoc/org/opengis/referencing/doc-files/WKT.html) format. So the first step is to load a vector layer and transform it into a WKT string. You could instead use the data we provid in the SBDI4R package `data("swe")`.
 
 ```{r sweshape}
 data("swe",package = "SBDI4R")
@@ -112,11 +82,7 @@ wGotaland <- swe$Counties$LnNamn %in% c("Blekinge", "Gotlands", "Hallands",
 gotaland_c <- swe$Counties[wGotaland,]
 ```
 
-There are details about this polygon that we need to take care before.
-The WKT string should not be too long to be accepted by the API service.
-Also, the polygon we just got is projected in the coordinate system
-SWEREF99 TM, and the API service only accepts coordinates in a geodesic
-coordinate system WGS84. Let's construct the WKT string:
+There are details about this polygon that we need to take care before. The WKT string should not be too long to be accepted by the API service. Also, the polygon we just got is projected in the coordinate system SWEREF99 TM, and the API service only accepts coordinates in a geodesic coordinate system WGS84. Let's construct the WKT string:
 
 ```{r searchpoly2WKT, warning=FALSE}
 # transform the CRS
@@ -152,7 +118,7 @@ oldpar <- par()
 par(mar = c(0,0,0,0))
 plot(gotaland_c$geometry, border="blue")
 plot(gotaland, lwd=2, add=TRUE)
-plot(rgeos::readWKT(wkt), lwd=2, border="red", add=TRUE)
+plot(gotaland_ch, lwd=2, border="red", add=TRUE)
 legend("bottomleft", inset = c(0,0.05),
        legend = c("counties", "Götaland", "search polygon"),
        col = c("blue","black", "red"),
@@ -161,20 +127,13 @@ legend("bottomleft", inset = c(0,0.05),
 suppressWarnings(par(oldpar))
 ```
 
-Next, we download the observations using the command `occurrences()`,
-but be aware that the search fields may not be the same as those used to
-search for taxa. We therefore recommend using the function
-`sbdi_fields("occurrence")` to find out which search fields we can use
-to filter for occurrences. Here we see that the field we need this time
-is "order".
+Next, we download the observations using the command `occurrences()`, but be aware that the search fields may not be the same as those used to search for taxa. We therefore recommend using the function `sbdi_fields("occurrence")` to find out which search fields we can use to filter for occurrences. Here we see that the field we need this time is "order".
 
 ```{r getData, cache=TRUE}
 xf <- SBDI4R::occurrences(taxon = "order:Odonata", 
                   fq = fq_str,
                   wkt = wkt,
-                  extra = "collector",
-                  email = "sbdi4r-test@biodiversitydata.se", 
-                  download_reason_id = 10)
+                  extra = "collector")
 ```
 
 ```{r localtmp, echo=FALSE, eval=FALSE}
@@ -182,10 +141,7 @@ save(xf, file = "data/tmp_occdata2_for compile.rdata")
 load(file = "data/tmp_occdata2_for compile.rdata")
 ```
 
-We have now downloaded the data locally and depending on your
-configuration this will be cached on your computer. However, as the
-search and download could take long time, we recommend to save the data
-locally. appropriate
+We have now downloaded the data locally and depending on your configuration this will be cached on your computer. However, as the search and download could take long time, we recommend to save the data locally. appropriate
 
 ```{r save2, eval=FALSE}
 save(xf, file = "an_appropriate_name.rdata")
@@ -194,16 +150,7 @@ load(file = "an_appropriate_name.rdata")
 
 ### Quality and fit-for-use check
 
-Before we can use the observation records we need to know if the
-observation effort (sampling effort) has varied over time and in space.
-We can approximate observation effort from the data by defining field
-visits i.e. occasions at which an observer has sampled observations. We
-reconstruct field visits (that is, assign each observation a visitUID)
-using using the package [BIRDS](https://greensway.github.io/BIRDS/).
-Additionally we want the data to be summarized over a grid of 25 km
-(provided through the SBDI4R package). The following functions will
-perform many different summaries at the same time. Please refer to the
-BIRDS package documentation for more detail.
+Before we can use the observation records we need to know if the observation effort (sampling effort) has varied over time and in space. We can approximate observation effort from the data by defining field visits i.e. occasions at which an observer has sampled observations. We reconstruct field visits (that is, assign each observation a visitUID) using using the package [BIRDS](https://greensway.github.io/BIRDS/). Additionally we want the data to be summarized over a grid of 25 km (provided through the SBDI4R package). The following functions will perform many different summaries at the same time. Please refer to the BIRDS package documentation for more detail.
 
 ```{r birds, message=FALSE, warning=FALSE}
 library(BIRDS)
@@ -233,8 +180,7 @@ save(list=c("OB", "SB"), file = "output/BIRDS_summary.rdata")
 load(file = "output/BIRDS_summary.rdata")
 ```
 
-Once summarised, we can see over space and for a few selected years how
-the number of observations is distributed:
+Once summarised, we can see over space and for a few selected years how the number of observations is distributed:
 
 ```{r plotBIRDSspatial_cose, eval=FALSE}
 maxC <- max(SB$spatial$nObs, na.rm = TRUE)
@@ -334,8 +280,7 @@ legend("bottomleft", inset = c(0,0.05),
 suppressWarnings(par(oldpar))
 ```
 
-We now want to use the number of field visits as the measure for
-sampling effort. :
+We now want to use the number of field visits as the measure for sampling effort. :
 
 ```{r ggplot1, message=FALSE, warning=FALSE, fig.width=8}
 library(cowplot)
@@ -366,18 +311,14 @@ grid.arrange(vis, spp, ncol=2)
 
 ### Temporal check
 
-We see that `SB` contains an element called `SB$temporal` that contains
-a daily time series with time-specific rows when there is information.
-`xts` also supports day time, but dating below day resolution is not yet
-implemented in the `BIRDS` package.
+We see that `SB` contains an element called `SB$temporal` that contains a daily time series with time-specific rows when there is information. `xts` also supports day time, but dating below day resolution is not yet implemented in the `BIRDS` package.
 
 ```{r temporal}
 sb.xts <- SB$temporal
 head(sb.xts, 5)
 ```
 
-Sub-setting is convenient in `xts` as you can do it with its dates and
-with a `/` for a range of dates.
+Sub-setting is convenient in `xts` as you can do it with its dates and with a `/` for a range of dates.
 
 ```{r subsetting, message=FALSE, warning=FALSE}
 sb.xts["2010-09-07"] #a specific day
@@ -385,11 +326,7 @@ sb.xts["2010-09-01/2010-09-15"] #for a period
 sb.xts["2010-09"] #a specific month
 ```
 
-The package `xts` has several tools for converting to different time
-periods. Here we use `apply.monthly` to obtain the total number of
-observations and visits per month. The plot command for an object of
-calss `xts` provides a many features. This makes it fairly easy to
-customize your plots. Read more in `?plot.xts`.
+The package `xts` has several tools for converting to different time periods. Here we use `apply.monthly` to obtain the total number of observations and visits per month. The plot command for an object of calss `xts` provides a many features. This makes it fairly easy to customize your plots. Read more in `?plot.xts`.
 
 ```{r monthlyPlotcode, eval=FALSE}
 library(xts)
@@ -436,38 +373,36 @@ addLegend("topleft", c("Observations", "Visits"),
 
 ### Species trends
 
-We can now look at some particular species and ask whether those have
-changed in occurrence over time:
+We can now look at some particular species and ask whether those have changed in occurrence over time:
 
 ```{r sppTrends, message=FALSE}
 speciesSummary(SB)[,1:4]
 ```
 
-We pick two species and compare their trends in number of visits where
-the species where reported, relative to the total number of visits.
+We pick two species and compare their trends in number of visits where the species where reported, relative to the total number of visits.
 
 ```{r trends, fig.width=8}
 library(dplyr)
-sppCountLq <- obsData(OB) %>% 
-            group_by(year,visitUID) %>% 
+sppCountLq <- obsData(OB) |> 
+            group_by(year,visitUID) |> 
             summarise("focalCount" = sum(scientificName == "Libellula quadrimaculata"),
                       "sppLength" = length(unique(scientificName)), 
-                      .groups = "drop") %>% 
-            ungroup() %>% 
-            group_by(year) %>% 
+                      .groups = "drop") |> 
+            ungroup() |> 
+            group_by(year) |> 
             summarise("focalCount" = sum(focalCount),
                       "nVis" = length(unique(visitUID)), 
                       .groups = NULL)
 
 sppCountLq$relCount <- sppCountLq$focalCount/sppCountLq$nVis
 
-sppCountSd <- obsData(OB) %>% 
-            group_by(year,visitUID) %>% 
+sppCountSd <- obsData(OB) |> 
+            group_by(year,visitUID) |> 
             summarise("focalCount" = sum(scientificName == "Sympetrum sanguineum"),
                       "sppLength" = length(unique(scientificName)), 
-                      .groups = "drop") %>% 
-            ungroup() %>% 
-            group_by(year) %>% 
+                      .groups = "drop") |> 
+            ungroup() |> 
+            group_by(year) |> 
             summarise("focalCount" = sum(focalCount),
                       "nVis" = length(unique(visitUID)), 
                       .groups = NULL)
