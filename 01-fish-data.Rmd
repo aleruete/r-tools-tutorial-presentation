@@ -41,7 +41,7 @@ Both filter strings (for data resource and for time period) will be treated as A
 
 Using the function `occurrences()` we can now query for the observations fulfilling our filter. If you haven't specified your email and the download reason in the `sbdi_config()` before, you need to pass this here.
 
-```{r getOcc, cache=TRUE, message=FALSE}
+```{r getOcc, cache=TRUE, message=FALSE, eval=FALSE}
 xf <- occurrences(fq = fq_str)
 
 # Remove what is not a species
@@ -55,7 +55,7 @@ table(xf$data$dataResourceName)
 save(xf, file = "data/tmp_occdata_for compile.rdata")
 ```
 
-```{r load, echo=FALSE, include=FALSE, eval=FALSE}
+```{r load, echo=FALSE, include=FALSE, eval=TRUE}
 load(file = "data/tmp_occdata_for compile.rdata")
 ```
 
@@ -116,12 +116,10 @@ leaflet(width = "100%", height = "550px") |>
 A quick summary over the years reveals a drop in number of records over time.
 
 ```{r timeTableCode, eval=FALSE}
-hist(xf$data$year, 
-     breaks = seq(y1, y2), 
-     xlab = "Year")
+hist(xf$data$year, breaks = seq(y1, y2), xlab = "Year")
 ```
 
-```{r timeHist, echo=FALSE, fig.height=3.5}
+```{r timeHist, echo=FALSE, fig.height=3.5, fig.align='center'}
 par(mar=c(4,4,1,1))
 hist(xf$data$year, 
      breaks = seq(y1, y2), 
@@ -165,9 +163,11 @@ For this we want to summarise occurrences species-wise over a defined grid inste
 :::
 
 ```{r overlay, warning=FALSE, message=FALSE}
-library(sf) # the function coordinates() and proj4string() are in sp
+library(sf)
+
 # load some shapes over Sweden's political borders
 data("swe_wgs84", package="SBDI4R", envir=environment())
+
 # a standard 50 km grid
 data("Sweden_Grid_50km_Wgs84", package="SBDI4R", envir=environment())
 grid <- Sweden_Grid_50km_Wgs84
@@ -180,7 +180,6 @@ obs <- st_as_sf(as.data.frame(xf$data),
 ObsInGridListID <- st_intersects(grid, obs)
 ObsInGridList <- lapply(ObsInGridListID, function(x) st_drop_geometry(obs[x,]))
 wNonEmpty <- unname( which( unlist(lapply(ObsInGridList, nrow)) != 0) )
-if(length(wNonEmpty)==0) message("Observations don't overlap any grid cell.")
 ```
 
 ### 
@@ -200,7 +199,6 @@ cols2use <- c("scientificName", "year")
 dataRes <- lapply(ObsInGridList[wNonEmpty], 
                   function(x){
                     x <- x[,cols2use]
-                    colnames(x) <- c("scientificName", "year")
                     return(c("nObs" = length(x[,"scientificName"]),
                              "nYears" = length(unique(x[,"year"])),
                              "nSpp" = length(unique(x[,"scientificName"]))
@@ -256,7 +254,8 @@ xgridded <- xf$data |>
                           values_from=present, 
                           values_fill=0)) |>
     ungroup()
-## where a species was not present, it will have NA: convert these to 0
+
+## where no species was present, it shows NA. Here we convert these to 0
 sppcols <- setdiff(names(xgridded),
                    c("longitude", "latitude", "richness"))
 xgridded <- xgridded |> 
