@@ -1,5 +1,5 @@
 ---
-title: "Using R tools for analysis <br>of primary biodiversity data provided by SBDI"
+title: "Using R tools for the analysis <br>of primary biodiversity data provided by SBDI"
 author: "Debora Arlt and Alejandro Ruete <br>for the Swedish Biodiversity Data Infrastructure" 
 date: "`r Sys.Date()`"
 description: "R tools for biodiversity data" 
