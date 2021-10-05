@@ -25,7 +25,7 @@ url: https\://biodiversitydata-se.github.io/r-tools-tutorial/
 
 ### Workflow
 
-::: notes
+::: {.notes}
 Biodiversity resources are increasingly international. The SBDI has made an effort to canalise biodiversity data and resources to help the research community access and analyse Swedish primary biodiversity data. Each research question draws its own challenges which are unique in themselves. Our aim here is to provide a few examples that prompt questions that may be asked at different stages of the process. The validity and appropriateness of a particular method depends on the individual researcher(s). For a comprehensive workflow on how to treat and analyse primary biodiversity data please refer to our tutorial on [biodiversity analysis tools](https://github.com/biodiversitydata-se/biodiversity-analysis-tools) where we go through the complete workflow
 :::
 
@@ -37,7 +37,7 @@ Data ➡️ Cleaning ➡️ Fitness evaluation ➡️ Analysis
 
 ### R and Mirroreum {.unnumbered}
 
-::: notes
+::: {.notes}
 The present tutorial is focused on the statistical programming language R. R is a free software environment for statistical computing and graphics that is widely used within the scientific community and where the complete analysis workflow can be documented in a fully reproducible way.
 
 At SBDI we provide access for researchers and students to [Mirroreum](https://mirroreum.biodiversitydata.se/) -- an online web-based environment for Reproducible Open Research in the area of biodiversity analysis. Mirroreum is based on a Free and Open Source stack of software. Logging in, you immediately get access to a web-based version of R Studio with a large number of pre-installed packages such as all the packages offered from ROpenSci and more.
@@ -57,7 +57,7 @@ Mirroreum offers more computational resources\* and a standardized environment
 
 The SBDI4R package enables the R community to directly access data and resources hosted by SBDI.
 
-::: notes
+::: {.notes}
 The SBDI4R package enables the R community to directly access data and resources hosted by SBDI. The goal is to enable observations of species to be queried and output in a range of standard formats. It includes some filter functions that allow you to filter prior to download. It also includes some simple summary functions, and some function for some simple data exploration. The examples included in this tutorial also show you how you can continue exploring and analyzing using other R package.
 :::
 
@@ -99,7 +99,7 @@ sbdi_config(cache_directory = "~/mydata/sbdi_cache") ## Linux
 
 Note that this directory must exist ([you need to create it yourself]{.ul}).
 
-::: notes
+::: {.notes}
 All results will be stored in that cache directory and will be used from one session to the next. They won't be re-downloaded from the server unless the user specifically deletes those files or changes the caching setting to "refresh".
 
 If you change the cache_directory to a permanent location, you may wish to add something like this to your .Rprofile file, so that it happens automatically each time the SBDI4R package is loaded:
