@@ -2,7 +2,7 @@
 
 ### The data
 
-::: notes
+::: {.notes}
 In this example we are interested in exploring data from a specific data resource -- the Swedish Electrofishing Registry - SERS (Department of Aquatic Resources, SLU Aqua). This database has 2.8 M observations starting in the 1950's.
 
 SBDI is a collection of many biodiversity databases. We start by searching for the data resource we are interested in by using the function `pick_filter()`. This is an interactive query guiding you through the many resources available to filtering your query (data resources, spatial layers, and curated species lists).
@@ -24,7 +24,7 @@ fq_str <- "data_resource_uid:dr10"
 
 ### Filter
 
-::: notes
+::: {.notes}
 But we are not interested in the complete database, we only want to look at the data from the last 10 years. For this we concatenate (add to a vector) another filter string. Both filter strings (for data resource and for time period) will be treated as AND factors.
 :::
 
@@ -158,7 +158,7 @@ write.csv(sppDF, "output/SERS_species_summary.csv")
 
 Let's now ask: How does the species richness vary across Sweden?
 
-::: notes
+::: {.notes}
 For this we want to summarise occurrences species-wise over a defined grid instead of plotting every observation point. First we need to overlay the observations with a grid. Here we are using the standard Swedish grids with grid square size of 50, 25, 10 or 5 km provided as data in the SBDI4R package (with Coordinate Reference System = WGS84, EPSG:4326).
 :::
 

@@ -19,7 +19,7 @@ sx$data[, c("guid", "scientificName", "rank", "occurrenceCount")]
 
 ### 
 
-::: notes
+::: {.notes}
 We quickly see there that other taxonomic levels appear too, and also species that look suspiciously as not belonging to dragonflies. But there is only one order.
 :::
 
@@ -82,7 +82,7 @@ wGotaland <- swe$Counties$LnNamn %in% c("Blekinge", "Gotlands", "Hallands", "Jö
 gotaland_c <- swe$Counties[wGotaland,]
 ```
 
-::: notes
+::: {.notes}
 Vector spatial layers (e.g.. polygons) can be imported in a number of different ways. SBDI APIs take as search input polygons in the so-called WKT [Well Known Text](https://www.geoapi.org/3.0/javadoc/org/opengis/referencing/doc-files/WKT.html) format. So the first step is to load a vector layer and transform it into a WKT string. You could instead use the data we provide in the SBDI4R package `data("swe")`.
 
 There are details about this polygon that we need to take care before. The WKT string should not be too long to be accepted by the API service. Also, the polygon we just got is projected in the coordinate system SWEREF99 TM, and the API service only accepts coordinates in a geodesic coordinate system WGS84.
@@ -136,7 +136,7 @@ suppressWarnings(par(oldpar))
 
 Next, we download the observations using the command `occurrences()`.
 
-::: notes
+::: {.notes}
 Next, we download the observations using the command `occurrences()`, but be aware that the search fields may not be the same as those used to search for taxa. We therefore recommend using the function `sbdi_fields("occurrence")` to find out which search fields we can use to filter for occurrences. Here we see that the field we need this time is "order".
 :::
 
@@ -160,7 +160,7 @@ head(xf$data)
 
 ### Quality and fit-for-use check
 
-::: notes
+::: {.notes}
 Before we can use the observation records we need to know if the observation effort (sampling effort) has varied over time and in space. We can approximate observation effort from the data by defining field visits i.e. occasions at which an observer has sampled observations. We reconstruct field visits (that is, assign each observation a visitUID) using the package [BIRDS](https://greensway.github.io/BIRDS/). Additionally we want the data to be summarized over a grid of 25 km (provided through the SBDI4R package). The following functions will perform many different summaries at the same time. Please refer to the BIRDS package documentation for more detail.
 :::
 
